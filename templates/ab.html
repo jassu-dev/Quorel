@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quorel — About, Team, Contact, API, Security & Privacy</title>
+    <meta name="description"
+        content="Blue–white themed site with responsive design, polished UI, Team, Contact, API, and Security & Privacy sections." />
+    <style>
+        :root {
+            --bg: #f2f6ff;
+            --bg-accent: #e9f0ff;
+            --surface: #ffffff;
+            --surface-2: #fcfdff;
+            --ink: #0b1f4a;
+            --muted: #5a74a6;
+            --muted-2: #6d86b4;
+            --border: #d7e4ff;
+            --brand: #2f5bff;
+            --brand-2: #5f84ff;
+            --brand-weak: #ecf2ff;
+
+            --radius-xl: 22px;
+            --radius-lg: 16px;
+            --radius: 12px;
+            --radius-sm: 10px;
+
+            --shadow-xs: 0 2px 6px rgba(18, 48, 112, .06);
+            --shadow-sm: 0 6px 14px rgba(18, 48, 112, .08);
+            --shadow-md: 0 14px 36px rgba(18, 48, 112, .12);
+            --focus: 0 0 0 4px rgba(47, 91, 255, .18);
+
+            --input-bg: #fff;
+            --input-border: #cfe0ff;
+            --input-ink: #0b1f4a;
+            --placeholder: #8aa0cc;
+
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background:
+                radial-gradient(1200px 480px at 0% -20%, var(--bg-accent), rgba(233, 240, 255, 0)) no-repeat,
+                var(--bg);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: var(--brand);
+            text-decoration: none
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+
+        /* Top header */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: saturate(130%) blur(6px);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .55));
+            border-bottom: 1px solid var(--border);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 14px 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: conic-gradient(from 210deg at 50% 50%, var(--brand), #8fb0ff, var(--brand) 85%);
+            box-shadow: 0 6px 18px rgba(47, 91, 255, .28);
+        }
+
+        .title {
+            font-weight: 700;
+            letter-spacing: .2px
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        nav a {
+            color: var(--ink);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: background .15s ease, border-color .15s ease;
+        }
+
+        nav a:hover {
+            background: var(--brand-weak)
+        }
+
+        nav a.active {
+            background: #eef3ff;
+            border-color: var(--border)
+        }
+
+        .container {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 22px 20px
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            margin: 16px 0;
+            background:
+                radial-gradient(220px 120px at 90% -10%, #edf3ff, rgba(237, 243, 255, 0)),
+                linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .92));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 26px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -60px;
+            top: -70px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle at center, #e7eeff 0%, rgba(231, 238, 255, 0) 70%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .85rem;
+            color: var(--muted);
+            background: var(--brand-weak);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 999px;
+            margin-bottom: 10px;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: .2px
+        }
+
+        .hero p {
+            margin: 0;
+            color: var(--muted);
+            max-width: 880px
+        }
+
+        /* Cards */
+        .card {
+            background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-top: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px
+        }
+
+        .col-7 {
+            grid-column: span 7
+        }
+
+        .col-5 {
+            grid-column: span 5
+        }
+
+        .col-6 {
+            grid-column: span 6
+        }
+
+        .col-12 {
+            grid-column: span 12
+        }
+
+        @media (max-width:1020px) {
+
+            .col-7,
+            .col-5,
+            .col-6 {
+                grid-column: span 12
+            }
+        }
+
+        h2 {
+            margin: 0 0 12px;
+            font-size: 1.25rem;
+            font-weight: 750
+        }
+
+        p.muted {
+            color: var(--muted);
+            margin: 0 0 10px
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--brand);
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-xs);
+            transition: transform .08s ease, filter .15s ease, box-shadow .15s ease;
+        }
+
+        .btn:hover {
+            filter: brightness(0.98);
+            box-shadow: var(--shadow-sm)
+        }
+
+        .btn:active {
+            transform: translateY(1px)
+        }
+
+        .btn.primary {
+            background: linear-gradient(180deg, var(--brand), var(--brand-2));
+            color: #fff;
+            border-color: transparent
+        }
+
+        .btn.ghost {
+            background: var(--brand-weak);
+            color: var(--ink);
+            border-color: var(--border)
+        }
+
+        /* Form */
+        .row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap
+        }
+
+        .row .field {
+            flex: 1 1 240px
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px
+        }
+
+        label {
+            font-size: .94rem;
+            font-weight: 600;
+            color: var(--ink)
+        }
+
+        .input {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 14px;
+            padding: 2px 12px 2px 38px;
+            transition: border .15s ease, box-shadow .15s ease, transform .06s ease;
+        }
+
+        .input:focus-within {
+            border-color: var(--brand);
+            box-shadow: var(--focus)
+        }
+
+        .icon {
+            position: absolute;
+            left: 12px;
+            color: #7793c7;
+            font-size: 16px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: var(--input-ink);
+            font: inherit;
+            outline: none;
+            padding: 12px 4px 12px 0;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical
+        }
+
+        ::placeholder {
+            color: var(--placeholder)
+        }
+
+        .hint {
+            font-size: .85rem;
+            color: var(--muted-2)
+        }
+
+        /* Team */
+        .team-section {
+            margin-top: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px
+        }
+
+        .team-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 750;
+            color: var(--ink)
+        }
+
+        .team-sub {
+            margin: 0;
+            color: var(--muted);
+            font-size: .95rem
+        }
+
+        .team-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media(min-width:560px) {
+            .team-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+        }
+
+        @media(min-width:900px) {
+            .team-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr))
+            }
+        }
+
+        @media(min-width:1200px) {
+            .team-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr))
+            }
+        }
+
+        .member-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: #c9d8ff
+        }
+
+        .member-head {
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        @media(max-width:559.98px) {
+            .member-head {
+                flex-direction: column;
+                align-items: flex-start
+            }
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #f2f2f2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+
+
+        @media(min-width:560px) {
+            .avatar {
+                width: 92px;
+                height: 92px;
+                aspect-ratio: auto;
+                border-radius: 50%
+            }
+        }
+
+        .member-name {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 750;
+            color: var(--ink)
+        }
+
+        .member-role {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-size: .93rem
+        }
+
+        .member-contact {
+            margin: 0;
+            color: var(--ink);
+            font-size: .95rem;
+            word-break: break-word
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .tag {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--brand-weak);
+            border: 1px solid var(--border);
+            color: var(--ink);
+            font-size: .78rem;
+            font-weight: 700
+        }
+
+
+        /* Security & Privacy */
+        .sec-priv {
+            margin-top: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sp-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px
+        }
+
+        .sp-col-6 {
+            grid-column: span 6
+        }
+
+        .sp-col-12 {
+            grid-column: span 12
+        }
+
+        @media(max-width:1000px) {
+            .sp-col-6 {
+                grid-column: span 12
+            }
+        }
+
+        .check {
+            color: #19c37d;
+            margin-right: 6px
+        }
+
+        .list {
+            margin: 8px 0 0 18px;
+            color: var(--muted)
+        }
+
+        .callout {
+            margin-top: 12px;
+            padding: 12px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            background: #f4f8ff;
+            color: var(--ink)
+        }
+
+        /* Utilities */
+        .m-0 {
+            margin: 0
+        }
+
+        .mt-8 {
+            margin-top: 8px
+        }
+
+        /* Footer */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font-size: .95rem;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border)
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Topbar -->
+    <div class="topbar">
+        <header>
+<div class="brand">
+    <a href="{{ url_for('land') }}" class="brand-link" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">Quorel</div>
+    </a>
+</div>
+
+            <nav>
+                <a href="#" class="active">About</a>
+                <a href="#team">Team</a>
+                <a href="#contact">Contact</a>
+
+                <a href="#security">Security & Privacy</a>
+            </nav>
+        </header>
+    </div>
+
+    <div class="container">
+        <!-- ABOUT -->
+        <section id="about" class="hero" aria-labelledby="about-title">
+            <span class="eyebrow">Overview</span>
+            <h1 id="about-title">About This Web Page</h1>
+            <p>Our platform provides the developer to get real time data throught API service this application
+                programming Interface enables the developers to use and integrate our Advanced Market real-time
+                observation in their systems. with this interface we are giving fast accurate and easy to use responses
+                in JSON formet, with this feature we are making our project more flexible and comfortable to be
+                accessed.
+            </p>
+        </section>
+
+        <!-- TEAM (Single) -->
+        <section id="team" class="team-section" aria-labelledby="team-title">
+            <div class="team-header">
+                <h2 id="team-title">Team</h2>
+
+            </div>
+            <div class="team-grid">
+                <article class="member-card" aria-label="Team member">
+                    <div class="member-head">
+                        <div class="avatar"> <img src="{{url_for('static',filename='khushi.jpeg')}}" alt="Portrait of Khushi Roy" class="avatar-img" />
+                        </div>
+                        <div>
+                            <h3 class="member-name">Khushi Roy</h3>
+                        </div>
+                    </div>
+                    <p class="member-contact mt-8">khushinroy@gmail.com</p>
+                </article>
+                <article class="member-card" aria-label="Team member">
+                    <div class="member-head">
+                        <div class="avatar">
+                            <img src="{{url_for('static',filename='jash.jpeg')}}" alt="Portrait of Maddala Jashwant" class="avatar-img" />
+                        </div>
+                        <div>
+                            <h3 class="member-name">Maddala Jashwant</h3>
+                        </div>
+                    </div>
+                    <p class="member-contact mt-8" style="font-size: 13px;">maddalajashwant69@gmail.com</p>
+                </article>
+
+                <article class="member-card" aria-label="Team member">
+                    <div class="member-head">
+                        <div class="avatar">
+                            <img src="{{url_for('static',filename='shamique.jpeg')}}" alt="Portrait of Shamique Khan" class="avatar-img" />
+                        </div>
+                        <div>
+                            <h3 class="member-name">Shamique Khan</h3>
+                        </div>
+                    </div>
+                    <p class="member-contact mt-8">shamiquekhan18@gmail.com</p>
+                    <div class="tags"></div>
+                </article>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact" class="hero" aria-labelledby="contact-title">
+            <span class="eyebrow">We’d love to hear from you</span>
+            <h1 id="contact-title">Get in touch</h1>
+            <p>Send a message using the form. The page preserves a calm blue–white aesthetic with refined
+                spacing,
+                tasteful depth, and strong accessibility focus states.</p>
+        </section>
+
+        <section class="grid card" aria-label="Contact content">
+            <div class="col-12 col-7">
+                <h2>Send a message</h2>
+<form action="{{ url_for('contact') }}" method="post" aria-label="Contact form">
+    <div class="row">
+        <div class="field">
+            <label for="name">Name</label>
+            <div class="input">
+                <span class="icon" aria-hidden="true">👤</span>
+                <input id="name" name="name" type="text" placeholder="Your full name" required />
+            </div>
+        </div>
+        <div class="field">
+            <label for="email">Email</label>
+            <div class="input">
+                <span class="icon" aria-hidden="true">✉️</span>
+                <input id="email" name="email" type="email" placeholder="name@example.com" required />
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="topic">Topic</label>
+        <div class="input">
+            <span class="icon" aria-hidden="true">🏷️</span>
+            <select id="topic" name="topic" required>
+                <option value="">Select a topic</option>
+                <option>General</option>
+                <option>Product</option>
+                <option>Partnership</option>
+                <option>Support</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="message">Message</label>
+        <div class="input" style="padding-left:12px">
+            <textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
+        </div>
+        <div class="hint">Please avoid sharing sensitive information.</div>
+    </div>
+
+    <div class="actions">
+        <button class="btn primary" type="submit">Send message</button>
+        <button class="btn ghost" type="reset">Clear</button>
+    </div>
+</form>
+
+            </div>
+        </section>
+
+
+        <!-- SECURITY & PRIVACY -->
+        <section id="security" class="sec-priv" aria-labelledby="sp-title">
+            <h2 id="sp-title">Security & Privacy</h2>
+            <div class="sp-grid" style="margin-top:6px">
+                <!-- Security -->
+                <div class="sp-col-6 card" aria-labelledby="sec-title">
+                    <h3 id="sec-title" style="margin:0 0 8px;font-size:1.05rem">Security</h3>
+                    <ul class="list">
+                        <li><span class="check">✔</span>Transport encryption via HTTPS/TLS for all client–server
+                            calls
+                            (recommended deployment).</li>
+                        <li><span class="check">✔</span>API key or token-based access for routes under <span
+                                class="kbd">/api/*</span> (configurable).</li>
+                        <li><span class="check">✔</span>Input validation and safe parsing for query parameters
+                            and JSON
+                            payloads.</li>
+                        <li><span class="check">✔</span>Rate limiting and basic request throttling to prevent
+                            abuse
+                            (reverse proxy support).</li>
+                        <li><span class="check">✔</span>Isolated storage for SQLite score history with
+                            least-privilege
+                            file permissions.</li>
+                        <li><span class="check">✔</span>Minimal error detail in responses to avoid leaking
+                            system
+                            information.</li>
+                    </ul>
+                    <div class="callout">Tip: place the service behind a gateway or load balancer (e.g., Nginx)
+                        for TLS
+                        termination, WAF rules, and centralized logging.</div>
+                </div>
+
+                <!-- Privacy -->
+                <div class="sp-col-6 card" aria-labelledby="priv-title">
+                    <h3 id="priv-title" style="margin:0 0 8px;font-size:1.05rem">Privacy</h3>
+                    <ul class="list">
+                        <li><span class="check">✔</span>No collection of personal data beyond form submissions
+                            required
+                            to respond.</li>
+                        <li><span class="check">✔</span>Emails and messages are used strictly for support and
+                            product
+                            communication.</li>
+                        <li><span class="check">✔</span>Score history is ticker-based and does not include
+                            personally
+                            identifiable information.</li>
+                        <li><span class="check">✔</span>Optional log retention with rotation; sensitive fields
+                            can be
+                            redacted in server logs.</li>
+                        <li><span class="check">✔</span>User requests can be deleted upon verified request via
+                            the
+                            contact form.</li>
+                    </ul>
+                    <div class="callout">Note: When self-hosting, configure data retention and backups according
+                        to
+                        organizational policy. Avoid storing secrets in code or client-side assets.</div>
+                </div>
+            </div>
+
+            <script>
+                // Update year in footer
+                document.getElementById('year').textContent = new Date().getFullYear();
+
+                // Simple nav active state on hash change
+                function setActiveLink() {
+                    const links = document.querySelectorAll('nav a');
+                    const hash = window.location.hash || '#about';
+                    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash));
+                }
+                window.addEventListener('hashchange', setActiveLink);
+                setActiveLink();
+            </script>
+</body>
+
+</html>

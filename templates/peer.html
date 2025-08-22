@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="quorel-peer-comparison">
+    <div class="quorel-card">
+        <div class="card-header">
+            <h1>Peer Comparison for {{ symbol }}</h1>
+            <p>Analyze how this stock compares to its peers in the market</p>
+        </div>
+
+        <form class="quorel-search-form" method="get" action="/peer">
+            <div class="form-group">
+                <input type="text" name="symbol" placeholder="Enter ticker symbol..." value="{{ symbol }}" required>
+                <button class="quorel-btn primary" type="submit">
+                    <span>Search</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if peers %}
+    <div class="quorel-card">
+        <div class="card-header">
+            <h2>Peer Analysis</h2>
+            <p>Comparison of {{ symbol }} with its market peers</p>
+        </div>
+
+        <div class="table-wrap">
+            <table class="quorel-table">
+                <thead>
+                    <tr>
+                        <th>Peer</th>
+                        <th>Score</th>
+                        <th>Correlation</th>
+                        <th>Influence Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for peer in peers %}
+                    <tr>
+                        <td class="ticker">{{ peer }}</td>
+                        <td class="score">{{ scores[peer] }}</td>
+                        <td class="correlation">
+                            {% if influence[peer] and influence[peer].corr is not none %}
+                            {{ influence[peer].corr }}
+                            {% else %}
+                            <span class="na">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="influence">
+                            {% if influence[peer] and influence[peer].rating %}
+                            <div class="rating">
+                                {% for i in range(influence[peer].rating) %}
+                                <span class="star">⭐</span>
+                                {% endfor %}
+                                <span class="rating-value">({{ influence[peer].rating }})</span>
+                            </div>
+                            {% else %}
+                            <span class="na">N/A</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if plot %}
+    <div class="quorel-card">
+        <div class="card-header">
+            <h2>Comparison Chart</h2>
+            <p>Visual representation of peer performance comparison</p>
+        </div>
+        <div class="chart-container">
+            <img src="{{ url_for('static', filename='plots/' + plot) }}" alt="Peer Comparison Chart">
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+    .quorel-peer-comparison {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .quorel-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: var(--shadow-soft);
+        padding: 32px;
+        margin-bottom: 32px;
+        border: 1px solid rgba(45, 105, 187, 0.12);
+    }
+
+    .card-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .card-header h1 {
+        color: var(--ink-900);
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .card-header h2 {
+        color: var(--ink-900);
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .card-header p {
+        color: var(--ink-700);
+        font-size: 16px;
+    }
+
+    .quorel-search-form {
+        display: flex;
+        justify-content: center;
+    }
+
+    .quorel-search-form .form-group {
+        display: flex;
+        max-width: 400px;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .quorel-search-form input {
+        flex: 1;
+        padding: 14px 16px;
+        border: 1px solid rgba(45, 105, 187, 0.2);
+        border-radius: 12px;
+        background: #fff;
+        color: var(--ink-900);
+        font-size: 16px;
+        transition: border-color var(--speed-fast), box-shadow var(--speed-fast);
+    }
+
+    .quorel-search-form input:focus {
+        outline: none;
+        border-color: var(--blue-500);
+        box-shadow: 0 0 0 3px rgba(93, 166, 255, 0.2);
+    }
+
+    .quorel-btn {
+        padding: 14px 20px;
+        border-radius: 12px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--speed-fast);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .quorel-btn.primary {
+        background: var(--blue-500);
+        color: white;
+        box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+    }
+
+    .quorel-btn.primary:hover {
+        background: var(--blue-600);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+    }
+
+    .table-wrap {
+        overflow: auto;
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .quorel-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
+    .quorel-table th {
+        background: var(--blue-100);
+        color: var(--ink-800);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px;
+        border-bottom: 1px solid rgba(45, 105, 187, 0.12);
+    }
+
+    .quorel-table td {
+        padding: 16px;
+        border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+        color: var(--ink-900);
+    }
+
+    .quorel-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .quorel-table tr:hover {
+        background: rgba(93, 166, 255, 0.06);
+        transition: background var(--speed-med);
+    }
+
+    .ticker {
+        font-weight: 600;
+        color: var(--blue-700);
+    }
+
+    .score {
+        font-weight: 600;
+    }
+
+    .correlation {
+        font-family: monospace;
+    }
+
+    .influence .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .influence .star {
+        font-size: 14px;
+    }
+
+    .influence .rating-value {
+        margin-left: 8px;
+        font-size: 14px;
+        color: var(--ink-700);
+    }
+
+    .na {
+        color: var(--muted);
+        font-style: italic;
+    }
+
+    .chart-container {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .chart-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .quorel-peer-comparison {
+            padding: 16px;
+        }
+
+        .quorel-card {
+            padding: 24px;
+        }
+
+        .quorel-search-form .form-group {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

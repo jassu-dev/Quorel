@@ -1,0 +1,17 @@
+Flask
+Flask-Bcrypt
+Flask-Mail
+Flask-Cors
+Flask-SocketIO
+Flask-SQLAlchemy
+pandas
+numpy
+matplotlib
+statsmodels
+scikit-learn
+yfinance
+requests
+beautifulsoup4
+feedparser
+nltk
+markdown

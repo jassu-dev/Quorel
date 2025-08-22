@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden - Quorel</title>
+    <style>
+        :root {
+            --blue-25: #f7faff;
+            --blue-50: #f2f7ff;
+            --blue-100: #e6f1ff;
+            --blue-200: #d3e7ff;
+            --blue-300: #b9d8ff;
+            --blue-400: #8fc0ff;
+            --blue-500: #5da6ff;
+            --blue-600: #3b86e8;
+            --blue-700: #2d69bb;
+            --ink-900: #0b1a33;
+            --ink-800: #173356;
+            --ink-700: #274264;
+            --ink-600: #35577b;
+            --muted: #6e8aab;
+            --shadow: 0 6px 28px rgba(23, 70, 161, 0.12);
+            --shadow-soft: 0 2px 14px rgba(23, 70, 161, 0.08);
+            --speed-fast: 180ms;
+            --speed-med: 280ms;
+            --grad: linear-gradient(135deg, rgba(93, 166, 255, 0.18), rgba(232, 242, 255, 0.6));
+            --grad-strong: linear-gradient(90deg, #2d69bb, #5da6ff);
+            --error: #e53e3e;
+            --error-light: #fed7d7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--blue-50);
+            color: var(--ink-900);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.4;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background elements */
+        .error-bg-element {
+            position: absolute;
+            z-index: 0;
+        }
+
+        .error-bg-element.circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(93, 166, 255, 0.1);
+            top: 10%;
+            left: 10%;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .error-bg-element.square {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            background: rgba(45, 105, 187, 0.08);
+            bottom: 15%;
+            right: 15%;
+            animation: float 18s ease-in-out infinite reverse;
+        }
+
+        .error-bg-element.triangle {
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 140px solid rgba(59, 134, 232, 0.06);
+            top: 20%;
+            right: 20%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+
+            66% {
+                transform: translateY(10px) rotate(-5deg);
+            }
+        }
+
+        /* Error content */
+        .error-container {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            z-index: 10;
+            border: 1px solid rgba(45, 105, 187, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--error);
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--error-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+
+        .error-icon::before,
+        .error-icon::after {
+            content: '';
+            position: absolute;
+            background: var(--error);
+            border-radius: 2px;
+        }
+
+        .error-icon::before {
+            width: 30px;
+            height: 4px;
+            transform: rotate(45deg);
+        }
+
+        .error-icon::after {
+            width: 30px;
+            height: 4px;
+            transform: rotate(-45deg);
+        }
+
+        .error-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--error);
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            font-size: 18px;
+            color: var(--ink-700);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .error-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--speed-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--blue-500);
+            color: white;
+            box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-600);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+        }
+
+        .btn-secondary {
+            background: rgba(45, 105, 187, 0.1);
+            color: var(--ink-700);
+            border: 1px solid rgba(45, 105, 187, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(45, 105, 187, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .error-container {
+                padding: 40px 25px;
+            }
+
+            .error-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background elements -->
+    <div class="error-bg-element circle"></div>
+    <div class="error-bg-element square"></div>
+    <div class="error-bg-element triangle"></div>
+
+    <div class="error-container">
+        <div class="error-icon" aria-hidden="true"></div>
+        <h1 class="error-title">403 - Access Denied</h1>
+        <p class="error-message">You do not have permission to access this page.</p>
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Return Home</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+    </div>
+</body>
+
+</html>

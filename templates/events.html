@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="quorel-events-card">
+  <div class="card-header">
+    <h2>Recent Market Events</h2>
+    <p>Simple sentiment + rule-based risk tags from public headlines</p>
+  </div>
+
+  {% if not events %}
+  <div class="quorel-error">
+    <div class="error-icon">⚠️</div>
+    <div class="error-content">
+      <h3>No headlines available</h3>
+      <p>Network/website might be blocked. Please try again later.</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="events-container">
+    {% for e in events %}
+    <div class="event-item">
+      <div class="event-headline">{{ e.headline }}</div>
+      <div class="event-meta">
+        <span class="sentiment sentiment-{{ e.sentiment_label|lower }}">
+          {{ e.sentiment_label }} ({{ "%.3f"|format(e.sentiment_score) }})
+        </span>
+        {% if e.risk_tags %}
+        <div class="risk-tags">
+          {% for tag in e.risk_tags %}
+          <span class="risk-tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<style>
+  .quorel-events-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    border: 1px solid rgba(45, 105, 187, 0.12);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .card-header h2 {
+    color: var(--ink-900);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .card-header p {
+    color: var(--ink-700);
+    font-size: 16px;
+  }
+
+  .quorel-error {
+    background: rgba(254, 215, 215, 0.3);
+    border: 1px solid rgba(229, 62, 62, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .error-icon {
+    font-size: 32px;
+  }
+
+  .error-content h3 {
+    color: var(--error);
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+
+  .error-content p {
+    color: var(--ink-700);
+  }
+
+  .events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .event-item {
+    background: var(--blue-25);
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid rgba(45, 105, 187, 0.1);
+    transition: transform var(--speed-fast), box-shadow var(--speed-fast);
+  }
+
+  .event-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .event-headline {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink-900);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .event-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .sentiment {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sentiment-positive {
+    background: rgba(72, 187, 120, 0.15);
+    color: #2f855a;
+  }
+
+  .sentiment-negative {
+    background: rgba(229, 62, 62, 0.15);
+    color: #c53030;
+  }
+
+  .sentiment-neutral {
+    background: rgba(45, 105, 187, 0.15);
+    color: var(--blue-700);
+  }
+
+  .risk-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .risk-tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(45, 105, 187, 0.1);
+    color: var(--blue-700);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .quorel-events-card {
+      padding: 24px;
+      margin: 0 16px;
+    }
+
+    .event-meta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .quorel-error {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+{% endblock %}

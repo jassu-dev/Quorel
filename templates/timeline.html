@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creditworthiness Timeline - Quorel</title>
+    <style>
+        :root {
+            --blue-25: #f7faff;
+            --blue-50: #f2f7ff;
+            --blue-100: #e6f1ff;
+            --blue-200: #d3e7ff;
+            --blue-300: #b9d8ff;
+            --blue-400: #8fc0ff;
+            --blue-500: #5da6ff;
+            --blue-600: #3b86e8;
+            --blue-700: #2d69bb;
+            --ink-900: #0b1a33;
+            --ink-800: #173356;
+            --ink-700: #274264;
+            --ink-600: #35577b;
+            --muted: #6e8aab;
+            --shadow: 0 6px 28px rgba(23, 70, 161, 0.12);
+            --shadow-soft: 0 2px 14px rgba(23, 70, 161, 0.08);
+            --speed-fast: 180ms;
+            --speed-med: 280ms;
+            --grad: linear-gradient(135deg, rgba(93, 166, 255, 0.18), rgba(232, 242, 255, 0.6));
+            --grad-strong: linear-gradient(90deg, #2d69bb, #5da6ff);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--blue-50);
+            color: var(--ink-900);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.4;
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header styling */
+        .timeline-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+            padding: 20px min(5%, 60px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .timeline-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            background: linear-gradient(145deg, var(--blue-500), var(--blue-300));
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 16px rgba(93, 166, 255, 0.28);
+        }
+
+        .timeline-brand h1 {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--ink-900);
+        }
+
+        .timeline-nav {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: var(--ink-700);
+        }
+
+        .timeline-nav a {
+            padding: 10px 14px;
+            border-radius: 10px;
+            transition: background var(--speed-fast), color var(--speed-fast), transform var(--speed-fast);
+            font-weight: 500;
+        }
+
+        .timeline-nav a:hover {
+            background: var(--blue-100);
+            color: var(--ink-900);
+            transform: translateY(-1px);
+        }
+
+        /* Main content */
+        .timeline-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .timeline-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            padding: 32px;
+            border: 1px solid rgba(45, 105, 187, 0.12);
+            text-align: center;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .card-header h2 {
+            color: var(--ink-900);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            color: var(--ink-700);
+            font-size: 16px;
+        }
+
+        .timeline-image {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin: 20px 0;
+        }
+
+        .timeline-actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--speed-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--blue-500);
+            color: white;
+            box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: var(--blue-600);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+        }
+
+        .btn-secondary {
+            background: rgba(45, 105, 187, 0.1);
+            color: var(--ink-700);
+            border: 1px solid rgba(45, 105, 187, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(45, 105, 187, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .timeline-footer {
+            background: linear-gradient(180deg, #f2f7ff, #e6f1ff);
+            border-top: 1px solid rgba(45, 105, 187, 0.12);
+            padding: 30px min(5%, 60px);
+            text-align: center;
+            color: var(--ink-700);
+            margin-top: 60px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .timeline-header {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .timeline-brand {
+                margin-bottom: 15px;
+            }
+
+            .timeline-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .timeline-container {
+                padding: 0 15px;
+                margin: 20px auto;
+            }
+
+            .timeline-card {
+                padding: 24px;
+            }
+
+            .timeline-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="timeline-header">
+        <div class="timeline-brand">
+            <div class="brand-mark" aria-hidden="true"></div>
+            <h1>Quorel</h1>
+        </div>
+        <nav class="timeline-nav">
+            <a href="{{ url_for('index') }}">Dashboard</a>
+            <a href="{{ url_for('score_page', ticker='AAPL') }}">Score Analysis</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="timeline-container">
+        <div class="timeline-card">
+            <div class="card-header">
+                <h2>Creditworthiness Timeline</h2>
+                <p>Historical analysis of credit score trends and patterns</p>
+            </div>
+
+            <img src="{{ url_for('static', filename='plots/credit_timeline.png') }}" alt="Creditworthiness Timeline"
+                class="timeline-image">
+
+            <div class="timeline-actions">
+                <a href="{{ url_for('score_page', ticker='AAPL') }}" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 12H5M5 12L12 5M5 12L12 19" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Back to Score Analysis
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Return to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="timeline-footer">
+        <p>© 2025 Quorel | Advanced Credit Analysis Platform</p>
+        <p>Made by Team Genix</p>
+    </footer>
+</body>
+
+</html>

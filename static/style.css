@@ -1,0 +1,22 @@
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial; margin:0; padding:0; background:#f6f7fb; color:#222}
+header{background:#0f172a;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:18px;margin:0}
+nav a{color:#fff; margin-left:12px; text-decoration:none; opacity:.9}
+nav a:hover{opacity:1}
+main{max-width:900px;margin:24px auto;padding:0 16px}
+.card{background:#fff;padding:16px 16px;margin-bottom:16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+label{display:block;margin-bottom:6px}
+input{padding:8px;border:1px solid #ddd;border-radius:8px;margin-right:8px}
+button{padding:9px 14px;border:none;background:#2563eb;color:#fff;border-radius:8px;cursor:pointer}
+button:hover{background:#1d4ed8}
+.metric{display:flex;align-items:baseline;gap:12px}
+.metric-value{font-size:36px;font-weight:700}
+.metric-label{color:#555}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #eee;padding:8px;text-align:left}
+.events{list-style:none;padding:0;margin:0}
+.events li{padding:10px 8px;border-bottom:1px solid #eee}
+.headline{font-weight:600;margin-bottom:4px}
+.meta{font-size:12px;color:#555;display:flex;gap:12px}
+.error{background:#fee2e2;color:#991b1b;padding:10px;border-radius:8px;border:1px solid #fecaca}
+footer{padding:16px;text-align:center;color:#666}

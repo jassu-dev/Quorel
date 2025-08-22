@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quorel</title>
+  <style>
+    :root {
+      --blue-25: #f7faff;
+      --blue-50: #f2f7ff;
+      --blue-100: #e6f1ff;
+      --blue-200: #d3e7ff;
+      --blue-300: #b9d8ff;
+      --blue-400: #8fc0ff;
+      --blue-500: #5da6ff;
+      --blue-600: #3b86e8;
+      --blue-700: #2d69bb;
+      --ink-900: #0b1a33;
+      --ink-800: #173356;
+      --ink-700: #274264;
+      --ink-600: #35577b;
+      --muted: #6e8aab;
+      --shadow: 0 6px 28px rgba(23, 70, 161, 0.12);
+      --shadow-soft: 0 2px 14px rgba(23, 70, 161, 0.08);
+      --speed-fast: 180ms;
+      --speed-med: 280ms;
+      --grad: linear-gradient(135deg, rgba(93, 166, 255, 0.18), rgba(232, 242, 255, 0.6));
+      --grad-strong: linear-gradient(90deg, #2d69bb, #5da6ff);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--blue-50);
+      color: var(--ink-900);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Header styling */
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+      padding: 0 min(5%, 60px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header h1 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--ink-900);
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      background: linear-gradient(145deg, var(--blue-500), var(--blue-300));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 16px rgba(93, 166, 255, 0.28);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--ink-700);
+    }
+
+    nav a {
+      padding: 10px 14px;
+      border-radius: 10px;
+      transition: background var(--speed-fast), color var(--speed-fast), transform var(--speed-fast);
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      background: var(--blue-100);
+      color: var(--ink-900);
+      transform: translateY(-1px);
+    }
+
+    nav a:last-child {
+      background: var(--blue-500);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+      transition: transform var(--speed-fast), box-shadow var(--speed-fast), opacity var(--speed-fast);
+    }
+
+    nav a:last-child:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+      opacity: 0.95;
+    }
+
+    /* Main content */
+    main {
+      flex: 1;
+      padding: 40px min(5%, 60px);
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(180deg, #f2f7ff, #e6f1ff);
+      border-top: 1px solid rgba(45, 105, 187, 0.12);
+      padding: 30px min(5%, 60px);
+      text-align: center;
+      color: var(--ink-700);
+      margin-top: auto;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+      }
+
+      header h1 {
+        margin-bottom: 15px;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      main {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>
+      <a href="{{ url_for('land') }}" style="display: flex; align-items: center; gap: 12px;">
+        <div class="brand-mark" aria-hidden="true"></div>
+        Quorel
+      </a>
+    </h1>
+
+    <nav>
+      <a href="{{ url_for('peer_page') }}">Peer Comparison</a>
+      <a href="{{ url_for('events_page') }}">Events</a>
+      <a href="{{ url_for('score_trend_page', ticker='AAPL') }}">Score Trend</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>Made by Team Genix</p>
+  </footer>
+</body>
+
+</html>

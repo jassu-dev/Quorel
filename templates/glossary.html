@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="quorel-glossary-card">
+  <div class="card-header">
+    <h2>Glossary of Terms</h2>
+    <p>Definitions of key financial and credit analysis terminology</p>
+  </div>
+
+  <div class="glossary-container">
+    {% for term, definition in terms.items() %}
+    <div class="glossary-item">
+      <div class="term-header">
+        <h3 class="term-title">{{ term }}</h3>
+        <div class="term-indicator"></div>
+      </div>
+      <div class="term-definition">
+        <p>{{ definition }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  .quorel-glossary-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    border: 1px solid rgba(45, 105, 187, 0.12);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .card-header h2 {
+    color: var(--ink-900);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .card-header p {
+    color: var(--ink-700);
+    font-size: 16px;
+  }
+
+  .glossary-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .glossary-item {
+    background: var(--blue-25);
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid rgba(45, 105, 187, 0.1);
+    transition: transform var(--speed-fast), box-shadow var(--speed-fast);
+  }
+
+  .glossary-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .term-title {
+    color: var(--ink-900);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .term-indicator {
+    width: 20px;
+    height: 20px;
+    position: relative;
+  }
+
+  .term-indicator::before,
+  .term-indicator::after {
+    content: '';
+    position: absolute;
+    background: var(--blue-600);
+    transition: transform var(--speed-fast);
+  }
+
+  .term-indicator::before {
+    width: 20px;
+    height: 2px;
+    top: 9px;
+  }
+
+  .term-indicator::after {
+    width: 2px;
+    height: 20px;
+    left: 9px;
+  }
+
+  .term-definition {
+    color: var(--ink-700);
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+
+  /* Optional: Add expand/collapse functionality */
+  .glossary-item.collapsed .term-indicator::after {
+    transform: rotate(90deg);
+  }
+
+  .glossary-item.collapsed .term-definition {
+    display: none;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .quorel-glossary-card {
+      padding: 24px;
+      margin: 0 16px;
+    }
+
+    .term-header {
+      align-items: flex-start;
+    }
+
+    .term-title {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<script>
+  // Optional: Add expand/collapse functionality
+  document.addEventListener('DOMContentLoaded', function () {
+    const glossaryItems = document.querySelectorAll('.glossary-item');
+
+    glossaryItems.forEach(item => {
+      const header = item.querySelector('.term-header');
+      header.addEventListener('click', () => {
+        item.classList.toggle('collapsed');
+      });
+
+      // Start with all items expanded
+      item.classList.add('collapsed');
+    });
+  });
+</script>
+{% endblock %}

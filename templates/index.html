@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="quorel-card">
+  <div class="card-header">
+    <div class="header-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M9 19V13C9 11.8954 8.10457 11 7 11H5C3.89543 11 3 11.8954 3 13V19C3 20.1046 3.89543 21 5 21H7C8.10457 21 9 20.1046 9 19Z"
+          stroke="var(--blue-600)" stroke-width="2" />
+        <path
+          d="M21 19V11C21 9.89543 20.1046 9 19 9H17C15.8954 9 15 9.89543 15 11V19C15 20.1046 15.8954 21 17 21H19C20.1046 21 21 20.1046 21 19Z"
+          stroke="var(--blue-600)" stroke-width="2" />
+        <path
+          d="M15 5V6C15 7.10457 14.1046 8 13 8H11C9.89543 8 9 7.10457 9 6V5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5Z"
+          stroke="var(--blue-600)" stroke-width="2" />
+      </svg>
+    </div>
+    <h2>Check a Ticker</h2>
+    <p>Enter a stock ticker symbol to get its creditworthiness score</p>
+  </div>
+  <form class="quorel-ticker-form" method="get" action="{{ url_for('score_page') }}">
+    <div class="form-group">
+      <label for="ticker">Ticker Symbol</label>
+      <input id="ticker" type="text" name="ticker" value="{{ default_ticker }}" required placeholder="e.g. AAPL" style="height:6vh; border-radius: 10px;">
+    </div>
+    <button class="quorel-btn primary" type="submit">
+      <span>Get Score</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+  </form>
+</section>
+
+<style>
+  .quorel-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    margin-bottom: 32px;
+    border: 1px solid rgba(45, 105, 187, 0.12);
+    max-width: 500px;
+    margin: 40px auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quorel-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--grad-strong);
+  }
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .header-icon {
+    margin-bottom: 16px;
+  }
+
+  .card-header h2 {
+    color: var(--ink-900);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .card-header p {
+    color: var(--ink-700);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .quorel-ticker-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--ink-800);
+    font-size: 14px;
+  }
+
+  .form-input {
+    width: 30%;
+    padding: 14px 16px;
+    border: 1px solid rgba(45, 105, 187, 0.2);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink-900);
+    font-size: 16px;
+    transition: border-color var(--speed-fast), box-shadow var(--speed-fast);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(93, 166, 255, 0.2);
+  }
+
+  .quorel-btn {
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--speed-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .quorel-btn.primary {
+    background: var(--blue-500);
+    color: white;
+    box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+  }
+
+  .quorel-btn.primary:hover {
+    background: var(--blue-600);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .quorel-card {
+      padding: 24px;
+      margin: 20px 16px;
+    }
+  }
+</style>
+{% endblock %}

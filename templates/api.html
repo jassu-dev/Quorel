@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quorel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue-25: #f7faff;
+            --blue-50: #f2f7ff;
+            --blue-100: #e6f1ff;
+            --blue-200: #d3e7ff;
+            --blue-300: #b9d8ff;
+            --blue-400: #8fc0ff;
+            --blue-500: #5da6ff;
+            --blue-600: #3b86e8;
+            --blue-700: #2d69bb;
+            --ink-900: #0b1a33;
+            --ink-800: #173356;
+            --ink-700: #274264;
+            --ink-600: #35577b;
+            --muted: #6e8aab;
+            --shadow: 0 6px 28px rgba(23, 70, 161, 0.12);
+            --shadow-soft: 0 2px 14px rgba(23, 70, 161, 0.08);
+            --speed-fast: 180ms;
+            --speed-med: 280ms;
+            --grad: linear-gradient(135deg, rgba(93, 166, 255, 0.18), rgba(232, 242, 255, 0.6));
+            --grad-strong: linear-gradient(90deg, #2d69bb, #5da6ff);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--blue-50);
+            color: var(--ink-900);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.4;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1200px, 92vw);
+            margin: 0 auto;
+        }
+
+        /* Navbar */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            color: var(--ink-900);
+        }
+
+        .brand-mark {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: linear-gradient(145deg, var(--blue-500), var(--blue-300));
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 16px rgba(93, 166, 255, 0.28);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: var(--ink-700);
+        }
+
+        .nav-link {
+            padding: 10px 14px;
+            border-radius: 10px;
+            transition: background var(--speed-fast), color var(--speed-fast), transform var(--speed-fast);
+        }
+
+        .nav-link:hover {
+            background: var(--blue-100);
+            color: var(--ink-900);
+            transform: translateY(-1px);
+        }
+
+        .cta {
+            background: var(--blue-500);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+            transition: transform var(--speed-fast), box-shadow var(--speed-fast), opacity var(--speed-fast);
+        }
+
+        .cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+            opacity: 0.95;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background:
+                radial-gradient(1200px 400px at 10% 0%, rgba(93, 166, 255, 0.25), transparent 60%),
+                radial-gradient(900px 380px at 100% 20%, rgba(61, 134, 232, 0.22), transparent 60%),
+                var(--grad);
+            border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(93, 166, 255, 0.2);
+            color: var(--ink-700);
+            border: 1px solid rgba(93, 166, 255, 0.3);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(4px);
+        }
+
+        .kicker-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--blue-500);
+            animation: pulse 2.2s ease-in-out infinite;
+            box-shadow: 0 0 0 0 rgba(93, 166, 255, 0.45);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(93, 166, 255, 0.45);
+            }
+
+            70% {
+                box-shadow: 0 0 0 14px rgba(93, 166, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(93, 166, 255, 0);
+            }
+        }
+
+        .hero h1 {
+            margin: 18px 0 10px;
+            line-height: 1.05;
+            font-size: clamp(38px, 6vw, 60px);
+            letter-spacing: -0.5px;
+            color: var(--ink-900);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero h1 .brand-name {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--blue-700), var(--blue-500));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 8px rgba(93, 166, 255, 0.3);
+        }
+
+        .hero p {
+            color: var(--ink-700);
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 8px 0 20px;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        /* API Documentation Styles */
+        .api-container {
+            display: flex;
+            gap: 40px;
+            padding: 60px 0;
+        }
+
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 80px;
+            align-self: flex-start;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--ink-900);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--blue-200);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-link {
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--ink-700);
+            transition: all var(--speed-fast);
+            font-weight: 500;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: var(--blue-100);
+            color: var(--ink-900);
+        }
+
+        .api-content {
+            flex: 1;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            scroll-margin-top: 100px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ink-900);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--blue-200);
+        }
+
+        .section-subtitle {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--ink-800);
+            margin: 30px 0 15px;
+        }
+
+        .endpoint-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 24px;
+            border: 1px solid rgba(45, 105, 187, 0.08);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .endpoint-method {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--blue-500);
+            color: white;
+        }
+
+        .endpoint-method.get {
+            background: #10b981;
+        }
+
+        .endpoint-url {
+            font-family: monospace;
+            font-size: 16px;
+            color: var(--ink-800);
+        }
+
+        .endpoint-description {
+            color: var(--ink-700);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .params-table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--blue-100);
+            color: var(--ink-800);
+            font-weight: 600;
+        }
+
+        .params-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+            color: var(--ink-700);
+        }
+
+        .code-block {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--ink-800);
+        }
+
+        .response-field {
+            color: #7c3aed;
+        }
+
+        .response-type {
+            color: #059669;
+        }
+
+        .response-comment {
+            color: #64748b;
+        }
+
+        .footer {
+            background: linear-gradient(180deg, #f2f7ff, #e6f1ff);
+            border-top: 1px solid rgba(45, 105, 187, 0.12);
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(45, 105, 187, 0.12);
+            padding-top: 20px;
+            text-align: center;
+            color: var(--ink-700);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .api-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                margin-bottom: 30px;
+            }
+
+            .hero {
+                min-height: 40vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="container nav-inner">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true"></div>
+                <span>Quorel</span>
+            </div>
+            <div class="nav-links">
+                <a class="nav-link" href="#">Home</a>
+                <a class="nav-link" href="#features">Features</a>
+                <a class="nav-link" href="#about">About</a>
+                <button class="nav-link cta" type="button">Get started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-kicker">
+                <div class="kicker-dot" aria-hidden="true"></div>
+                <span>API Documentation</span>
+            </div>
+            <h1>Credit Intelligence <span class="brand-name">API</span></h1>
+            <p>Comprehensive documentation for Quorel's credit scoring and financial intelligence API endpoints.</p>
+        </div>
+    </header>
+
+    <!-- API Documentation -->
+    <div class="container api-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <h3 class="sidebar-title">API Endpoints</h3>
+            <div class="sidebar-nav">
+                <a href="#base-info" class="sidebar-link active">Base Information</a>
+                <a href="#health-check" class="sidebar-link">Health Check</a>
+                <a href="#score-page" class="sidebar-link">Score Page</a>
+                <a href="#api-score" class="sidebar-link">API - Score (JSON)</a>
+                <a href="#peer-comparison" class="sidebar-link">Peer Comparison</a>
+                <a href="#timeline" class="sidebar-link">Timeline</a>
+                <a href="#events-page" class="sidebar-link">Events Page</a>
+                <a href="#api-events" class="sidebar-link">API - Events (JSON)</a>
+                <a href="#score-history" class="sidebar-link">Score History</a>
+                <a href="#score-trend" class="sidebar-link">Score Trend</a>
+                <a href="#glossary" class="sidebar-link">Glossary</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="api-content">
+            <!-- Base Information -->
+            <section id="base-info" class="section">
+                <h2 class="section-title">Base Information</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method">BASE</span>
+                        <span class="endpoint-url">http://&lt;host&gt;:5000</span>
+                    </div>
+                    <p class="endpoint-description">
+                        This API provides access to credit scoring, peer comparison, event sentiment, and score trends
+                        for financial tickers.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Health Check -->
+            <section id="health-check" class="section">
+                <h2 class="section-title">Health Check</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/health</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Quick status check to ensure the server is running.
+                    </p>
+
+                    <h3 class="section-subtitle">Response</h3>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;"status": "ok"<br>
+                        }
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score Page -->
+            <section id="score-page" class="section">
+                <h2 class="section-title">Score Page</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/score</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Computes creditworthiness score, renders charts, and explanations.
+                    </p>
+
+                    <h3 class="section-subtitle">Parameters</h3>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ticker</td>
+                                <td>string</td>
+                                <td>Stock symbol (default: AAPL)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="section-subtitle">Response</h3>
+                    <p class="endpoint-description">
+                        HTML page with:
+                    </p>
+                    <ul class="endpoint-description">
+                        <li>Final Score (0-100)</li>
+                        <li>Feature Importances Chart</li>
+                        <li>Price + Moving Averages</li>
+                        <li>Sentiment Chart</li>
+                        <li>Basic + Advanced Explanations</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- API - Score (JSON) -->
+            <section id="api-score" class="section">
+                <h2 class="section-title">API - Score (JSON)</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/api/score/&lt;ticker&gt;</span>
+                    </div>
+
+                    <h3 class="section-subtitle">Example Response</h3>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;"ticker": "AAPL",<br>
+                        &nbsp;&nbsp;"score_0_to_100": 72.5,<br>
+                        &nbsp;&nbsp;"p_good_last_step": 0.823,<br>
+                        &nbsp;&nbsp;"feature_importances": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"Return": 0.45,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"Volatility": 0.32,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"Liquidity": 0.23<br>
+                        &nbsp;&nbsp;},<br>
+                        &nbsp;&nbsp;"explanation": "Model found short-term momentum strong and volume stable."<br>
+                        }
+                    </div>
+                </div>
+            </section>
+
+            <!-- Peer Comparison -->
+            <section id="peer-comparison" class="section">
+                <h2 class="section-title">Peer Comparison</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/peer</span>
+                    </div>
+
+                    <h3 class="section-subtitle">Parameters</h3>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>symbol</td>
+                                <td>string</td>
+                                <td>Stock symbol (default: AAPL)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="endpoint-description">
+                        Compares the given ticker against its peers and plots scores.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Timeline -->
+            <section id="timeline" class="section">
+                <h2 class="section-title">Timeline (Score Evolution)</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/timeline</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Plots a timeline of scores and logged events.
+                    </p>
+                    <p class="endpoint-description">
+                        Response: HTML page with matplotlib chart.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Events Page -->
+            <section id="events-page" class="section">
+                <h2 class="section-title">Events Page</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/events</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Shows recent market events and their sentiment.
+                    </p>
+                </div>
+            </section>
+
+            <!-- API - Events (JSON) -->
+            <section id="api-events" class="section">
+                <h2 class="section-title">API - Events (JSON)</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/api/events</span>
+                    </div>
+
+                    <h3 class="section-subtitle">Example Response</h3>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;"events": [<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"headline": "Apple launches new iPhone",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"sentiment_label": "pos",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"sentiment_score": 0.78<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;},<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"headline": "Supply chain disruptions hit tech sector",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"sentiment_label": "neg",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"sentiment_score": -0.65<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;]<br>
+                        }
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score History -->
+            <section id="score-history" class="section">
+                <h2 class="section-title">Score History (SQLite)</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/api/score_history/&lt;ticker&gt;</span>
+                    </div>
+
+                    <h3 class="section-subtitle">Example Response</h3>
+                    <div class="code-block">
+                        [<br>
+                        &nbsp;&nbsp;{"time": "2025-08-18 15:23:10", "score": 72.5},<br>
+                        &nbsp;&nbsp;{"time": "2025-08-18 16:02:55", "score": 70.8},<br>
+                        &nbsp;&nbsp;{"time": "2025-08-19 09:15:01", "score": 74.2}<br>
+                        ]
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score Trend -->
+            <section id="score-trend" class="section">
+                <h2 class="section-title">Score Trend Page (Interactive)</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/score_trend/&lt;ticker&gt;</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Renders an interactive chart (Chart.js) of historical score trends.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Glossary -->
+            <section id="glossary" class="section">
+                <h2 class="section-title">Glossary</h2>
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-url">/glossary</span>
+                    </div>
+                    <p class="endpoint-description">
+                        Displays glossary of financial and credit terms.
+                    </p>
+                </div>
+            </section>
+
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Quorel - Credit Intelligence API</p>
+                <p>Documentation version 1.0 - Updated August 19, 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    // Update active class in sidebar
+                    document.querySelectorAll('.sidebar-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    // Scroll to section
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Update active link on scroll
+        window.addEventListener('scroll', function () {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+
+            let currentSection = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

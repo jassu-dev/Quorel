@@ -1,0 +1,736 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="quorel-score-analysis">
+  <div class="quorel-card">
+    <div class="card-header">
+      <h2>Credit Analysis for {{ ticker }}</h2>
+      <p>Comprehensive creditworthiness assessment with AI-powered insights</p>
+    </div>
+
+    {% if error %}
+    <div class="quorel-error">
+      {{ error }}
+    </div>
+    {% else %}
+    <div class="score-display">
+      <div class="score-metric">
+        <div class="metric-value">{{ score }}</div>
+        <div class="metric-label">Creditworthiness Score (0-100)</div>
+      </div>
+      <div class="score-details">
+        <div class="detail-item">
+          <span class="detail-label">Underlying Model Score:</span>
+          <span class="detail-value">{{ underlying_model_score }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Model Probability (good):</span>
+          <span class="detail-value">{{ prob }}</span>
+        </div>
+        {% if latest_close %}
+        <div class="detail-item">
+          <span class="detail-label">Latest Close:</span>
+          <span class="detail-value">{{ latest_close }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if not error %}
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Feature Importances</h3>
+      <p>Key factors influencing the creditworthiness assessment</p>
+    </div>
+    {% if feat_plot %}
+    <div class="chart-container">
+      <img src="{{ url_for('static', filename='plots/' ~ feat_plot) }}" alt="Feature Importances">
+    </div>
+    {% else %}
+    <p class="no-data">No feature importance chart available.</p>
+    {% endif %}
+  </div>
+
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Price & Moving Averages</h3>
+      <p>Historical price performance with technical indicators</p>
+    </div>
+    {% if price_plot %}
+    <div class="chart-container">
+      <img src="{{ url_for('static', filename='plots/' ~ price_plot) }}" alt="Price Chart">
+    </div>
+    {% else %}
+    <p class="no-data">No price chart available.</p>
+    {% endif %}
+  </div>
+
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Event Sentiment Analysis</h3>
+      <p>How recent news events impact the credit score</p>
+    </div>
+    {% if sent_plot %}
+    <div class="chart-container">
+      <img src="{{ url_for('static', filename='plots/' ~ sent_plot) }}" alt="Sentiment Analysis">
+    </div>
+    {% endif %}
+
+    <div class="explanation-section">
+      <h4>Score Impact Explanation</h4>
+      <p>{{ explanation }}</p>
+    </div>
+
+    <div class="events-section">
+      <h4>Recent Events (Top 8)</h4>
+      <ul class="events-list">
+        {% for e in events[:8] %}
+        <li class="event-item sentiment-{{ e.sentiment_label }}">
+          <span class="sentiment-badge">{{ e.sentiment_label }}</span>
+          <span class="sentiment-score">({{ "%.3f"|format(e.sentiment_score) }})</span>
+          <span class="event-headline">{{ e.headline }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  {% if forecast_adj %}
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Forecast Adjustment</h3>
+      <p>How predictive analytics influenced the final score</p>
+    </div>
+    <div class="forecast-adjustment">
+      <p>The forecast contributed <b>{{ forecast_adj }}</b> points to the final score.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if price_forecast %}
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Price Forecast</h3>
+      <p>Predicted price movement over the next {{ price_forecast|length }} periods</p>
+    </div>
+    <div class="chart-container">
+      <canvas id="priceForecastChart"></canvas>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if score_forecast %}
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Score Forecast</h3>
+      <p>Predicted credit score trajectory over the next {{ score_forecast|length }} periods</p>
+    </div>
+    <div class="chart-container">
+      <canvas id="scoreForecastChart"></canvas>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>📖 Friendly Explanation</h3>
+      <p>Plain-language summary of the credit analysis</p>
+    </div>
+    <div class="friendly-explanation">
+      {{ friendly_explanation|safe }}
+    </div>
+  </div>
+
+  <!-- Advanced Explainability -->
+  <div class="quorel-card">
+    <div class="card-header">
+      <h3>Advanced Explanation</h3>
+      <p>Detailed technical breakdown of the credit assessment</p>
+    </div>
+    <button id="toggleBtn" class="quorel-btn secondary">
+      <span>Show Advanced Explanation</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <div id="advanced" class="advanced-explanation">
+      <div class="explanation-section">
+        <h4>Feature Contribution Breakdown</h4>
+        <ul class="feature-list">
+          {% for feat, val in advanced_explanation.feature_contributions.items() %}
+          <li class="feature-item">
+            <span class="feature-name">{{ feat }}</span>
+            <span class="feature-value">{{ val|round(3) }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="explanation-section">
+        <h4>Trend Indicators</h4>
+        <div class="trend-indicators">
+          <div class="trend-item">
+            <span class="trend-label">Short-term:</span>
+            <span class="trend-value">{{ advanced_explanation.trend_indicators.short_term }}</span>
+          </div>
+          <div class="trend-item">
+            <span class="trend-label">Long-term:</span>
+            <span class="trend-value">{{ advanced_explanation.trend_indicators.long_term }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="explanation-section">
+        <h4>Reasoning</h4>
+        <p>{{ advanced_explanation.structured_events }}</p>
+        <p>{{ advanced_explanation.unstructured_events }}</p>
+      </div>
+
+      <div class="explanation-section">
+        <h4>Plain-language Summary</h4>
+        <p>{{ advanced_explanation.plain_summary }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-links">
+    <a href="{{ url_for('glossary_page') }}" class="quorel-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 6.253C13.791 4.644 16.422 4 19 4C19.665 4 20.328 4.063 20.97 4.188C21.058 4.206 21.14 4.244 21.21 4.3C21.28 4.356 21.336 4.428 21.372 4.51C21.527 4.843 21.527 5.22 21.372 5.553C21.336 5.634 21.28 5.707 21.21 5.763C21.14 5.819 21.058 5.857 20.97 5.875C20.328 6 19.665 6.063 19 6.063C16.948 6.063 14.947 6.591 13.22 7.584C12.527 7.971 11.473 7.971 10.78 7.584C9.053 6.591 7.052 6.063 5 6.063C4.335 6.063 3.672 6 3.03 5.875C2.942 5.857 2.86 5.819 2.79 5.763C2.72 5.707 2.664 5.634 2.628 5.553C2.473 5.22 2.473 4.843 2.628 4.51C2.664 4.428 2.72 4.356 2.79 4.3C2.86 4.244 2.942 4.206 3.03 4.188C3.672 4.063 4.335 4 5 4C7.578 4 10.209 4.644 12 6.253Z"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path
+          d="M21 8V16C21 16.665 20.937 17.328 20.812 17.97C20.794 18.058 20.756 18.14 20.7 18.21C20.644 18.28 20.572 18.336 20.49 18.372C20.157 18.527 19.78 18.527 19.447 18.372C19.366 18.336 19.293 18.28 19.237 18.21C19.181 18.14 19.143 18.058 19.125 17.97C19 17.328 18.937 16.665 18.937 16C18.937 13.948 19.465 11.947 20.458 10.22C20.845 9.527 20.845 8.473 20.458 7.78C19.465 6.053 18.937 4.052 18.937 2C18.937 1.335 19 0.672 19.125 0.03C19.143 -0.058 19.181 -0.14 19.237 -0.21C19.293 -0.28 19.366 -0.336 19.447 -0.372C19.78 -0.527 20.157 -0.527 20.49 -0.372C20.572 -0.336 20.644 -0.28 20.7 -0.21C20.756 -0.14 20.794 -0.058 20.812 0.03C20.937 0.672 21 1.335 21 2V8Z"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Learn what these terms mean (Glossary)
+    </a>
+  </div>
+
+  <div class="action-buttons">
+    <a href="{{ url_for('score_trend_page', ticker=ticker) }}" class="quorel-btn primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 20V10M12 20V4M6 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+      View Time-Based Score Analysis
+    </a>
+  </div>
+  {% endif %}
+</section>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  .quorel-score-analysis {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .quorel-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    margin-bottom: 32px;
+    border: 1px solid rgba(45, 105, 187, 0.12);
+  }
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .card-header h2 {
+    color: var(--ink-900);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .card-header h3 {
+    color: var(--ink-900);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .card-header h4 {
+    color: var(--ink-900);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .card-header p {
+    color: var(--ink-700);
+    font-size: 16px;
+  }
+
+  .quorel-error {
+    background: var(--error-light);
+    color: var(--error);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(229, 62, 62, 0.3);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .score-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .score-metric {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .metric-value {
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--blue-600);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .metric-label {
+    color: var(--ink-700);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .score-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--blue-25);
+    border-radius: 12px;
+  }
+
+  .detail-label {
+    font-weight: 600;
+    color: var(--ink-800);
+  }
+
+  .detail-value {
+    font-weight: 600;
+    color: var(--ink-900);
+  }
+
+  .chart-container {
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  .chart-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .no-data {
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    padding: 20px;
+  }
+
+  .explanation-section {
+    margin-bottom: 24px;
+  }
+
+  .explanation-section h4 {
+    margin-bottom: 12px;
+    color: var(--ink-800);
+  }
+
+  .explanation-section p {
+    color: var(--ink-700);
+    line-height: 1.6;
+  }
+
+  .events-section {
+    margin-top: 24px;
+  }
+
+  .events-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .event-item {
+    padding: 16px;
+    border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .event-item:last-child {
+    border-bottom: none;
+  }
+
+  .sentiment-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .sentiment-pos .sentiment-badge {
+    background: rgba(72, 187, 120, 0.15);
+    color: #2f855a;
+  }
+
+  .sentiment-neg .sentiment-badge {
+    background: rgba(229, 62, 62, 0.15);
+    color: #c53030;
+  }
+
+  .sentiment-neu .sentiment-badge {
+    background: rgba(45, 105, 187, 0.15);
+    color: var(--blue-700);
+  }
+
+  .sentiment-score {
+    font-size: 14px;
+    color: var(--muted);
+    min-width: 60px;
+  }
+
+  .event-headline {
+    flex: 1;
+    color: var(--ink-800);
+  }
+
+  .forecast-adjustment {
+    text-align: center;
+    padding: 20px;
+    background: var(--blue-25);
+    border-radius: 12px;
+  }
+
+  .forecast-adjustment p {
+    font-size: 18px;
+    color: var(--ink-800);
+    margin: 0;
+  }
+
+  .friendly-explanation {
+    background: var(--blue-25);
+    padding: 24px;
+    border-radius: 12px;
+    line-height: 1.6;
+    color: var(--ink-800);
+  }
+
+  .advanced-explanation {
+    display: none;
+    margin-top: 24px;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .feature-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+  }
+
+  .feature-item:last-child {
+    border-bottom: none;
+  }
+
+  .feature-name {
+    color: var(--ink-800);
+  }
+
+  .feature-value {
+    font-weight: 600;
+    color: var(--blue-700);
+  }
+
+  .trend-indicators {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .trend-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--blue-25);
+    border-radius: 12px;
+  }
+
+  .trend-label {
+    font-weight: 600;
+    color: var(--ink-800);
+  }
+
+  .trend-value {
+    font-weight: 600;
+    color: var(--blue-700);
+  }
+
+  .quorel-btn {
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--speed-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .quorel-btn.primary {
+    background: var(--blue-500);
+    color: white;
+    box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+  }
+
+  .quorel-btn.primary:hover {
+    background: var(--blue-600);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+  }
+
+  .quorel-btn.secondary {
+    background: rgba(45, 105, 187, 0.1);
+    color: var(--ink-700);
+    border: 1px solid rgba(45, 105, 187, 0.2);
+  }
+
+  .quorel-btn.secondary:hover {
+    background: rgba(45, 105, 187, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .quorel-link {
+    color: var(--blue-600);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color var(--speed-fast);
+    text-decoration: none;
+  }
+
+  .quorel-link:hover {
+    color: var(--blue-700);
+  }
+
+  .action-links {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .action-buttons {
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .quorel-score-analysis {
+      padding: 16px;
+    }
+
+    .quorel-card {
+      padding: 24px;
+    }
+
+    .metric-value {
+      font-size: 48px;
+    }
+
+    .score-details {
+      grid-template-columns: 1fr;
+    }
+
+    .event-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .trend-indicators {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    // Toggle advanced explanation
+    const toggleBtn = document.getElementById("toggleBtn");
+    const advanced = document.getElementById("advanced");
+    if (toggleBtn && advanced) {
+      toggleBtn.addEventListener("click", function () {
+        const isHidden = advanced.style.display === "none" || !advanced.style.display;
+        advanced.style.display = isHidden ? "block" : "none";
+
+        const span = this.querySelector('span');
+        if (span) {
+          span.textContent = isHidden ? "Hide Advanced Explanation" : "Show Advanced Explanation";
+        }
+
+        // Rotate the arrow icon
+        const svg = this.querySelector('svg');
+        if (svg) {
+          svg.style.transition = 'transform 0.3s ease';
+          svg.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+      });
+    }
+
+    // Animate the score counter
+    const metricVal = document.querySelector('.metric-value');
+    if (metricVal) {
+      const target = parseFloat(metricVal.textContent);
+      if (!isNaN(target)) {
+        let current = 0;
+        const duration = 1500; // 1.5 seconds
+        const steps = 60; // 60 frames
+        const increment = target / steps;
+        const stepTime = duration / steps;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          metricVal.textContent = Math.round(current).toString();
+        }, stepTime);
+      }
+    }
+
+    // Chart rendering functions
+    {% if price_forecast %}
+    const PRICE_FORECAST = {{ price_forecast| tojson
+  }};
+  {% else %}
+  const PRICE_FORECAST = null;
+  {% endif %}
+
+  {% if score_forecast %}
+  const SCORE_FORECAST = {{ score_forecast| tojson }};
+  {% else %}
+  const SCORE_FORECAST = null;
+  {% endif %}
+
+  function makeDayLabels(n) {
+    return Array.from({ length: n }, (_, i) => "Day " + (i + 1));
+  }
+
+  function renderLineChart(canvasId, label, data) {
+    const el = document.getElementById(canvasId);
+    if (!el || !Array.isArray(data) || data.length === 0 || typeof Chart === "undefined") return;
+
+    if (el._chartInstance) {
+      try {
+        el._chartInstance.destroy();
+      } catch (e) { }
+    }
+
+    el._chartInstance = new Chart(el.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: makeDayLabels(data.length),
+        datasets: [{
+          label: label,
+          data: data,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: 'rgba(93, 166, 255, 1)',
+          backgroundColor: 'rgba(93, 166, 255, 0.1)',
+          borderColor: 'rgba(93, 166, 255, 1)',
+          tension: 0.2,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: label,
+            font: {
+              size: 16,
+              weight: 'bold'
+            },
+            color: 'rgba(11, 26, 51, 1)'
+          },
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Horizon',
+              color: 'rgba(11, 26, 51, 0.8)'
+            },
+            grid: {
+              color: 'rgba(45, 105, 187, 0.1)'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: label,
+              color: 'rgba(11, 26, 51, 0.8)'
+            },
+            grid: {
+              color: 'rgba(45, 105, 187, 0.1)'
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Render charts if data is available
+  if (PRICE_FORECAST) {
+    renderLineChart('priceForecastChart', 'Predicted Price', PRICE_FORECAST);
+  }
+
+  if (SCORE_FORECAST) {
+    renderLineChart('scoreForecastChart', 'Predicted Score', SCORE_FORECAST);
+  }
+    }) ();
+</script>
+{% endblock %}

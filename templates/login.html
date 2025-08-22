@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Quorel</title>
+  <style>
+    :root {
+      --blue-25: #f7faff;
+      --blue-50: #f2f7ff;
+      --blue-100: #e6f1ff;
+      --blue-200: #d3e7ff;
+      --blue-300: #b9d8ff;
+      --blue-400: #8fc0ff;
+      --blue-500: #5da6ff;
+      --blue-600: #3b86e8;
+      --blue-700: #2d69bb;
+      --ink-900: #0b1a33;
+      --ink-800: #173356;
+      --ink-700: #274264;
+      --ink-600: #35577b;
+      --muted: #6e8aab;
+      --shadow: 0 6px 28px rgba(23, 70, 161, 0.12);
+      --shadow-soft: 0 2px 14px rgba(23, 70, 161, 0.08);
+      --speed-fast: 180ms;
+      --speed-med: 280ms;
+      --grad: linear-gradient(135deg, rgba(93, 166, 255, 0.18), rgba(232, 242, 255, 0.6));
+      --grad-strong: linear-gradient(90deg, #2d69bb, #5da6ff);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--blue-50);
+      color: var(--ink-900);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.4;
+      height: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1200px, 92vw);
+      margin: 0 auto;
+    }
+
+    /* Navbar */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(45, 105, 187, 0.08);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--ink-900);
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: linear-gradient(145deg, var(--blue-500), var(--blue-300));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 16px rgba(93, 166, 255, 0.28);
+    }
+
+    /* Login page specific styles */
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 64px);
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(1200px 400px at 10% 0%, rgba(93, 166, 255, 0.25), transparent 60%),
+        radial-gradient(900px 380px at 100% 20%, rgba(61, 134, 232, 0.22), transparent 60%),
+        var(--grad);
+    }
+
+    /* Enhanced animated background with more visibility */
+    .graph-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.45;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .graph-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 80%;
+      stroke: var(--blue-600);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawLine 18s linear infinite, moveLine 25s linear infinite;
+      filter: drop-shadow(0 2px 4px rgba(45, 105, 187, 0.2));
+    }
+
+    .graph-line:nth-child(2) {
+      stroke: var(--blue-500);
+      stroke-width: 2;
+      animation-delay: 3s;
+      height: 70%;
+      filter: drop-shadow(0 2px 3px rgba(45, 105, 187, 0.15));
+    }
+
+    .graph-line:nth-child(3) {
+      stroke: var(--blue-700);
+      stroke-width: 1.8;
+      animation-delay: 6s;
+      height: 60%;
+      filter: drop-shadow(0 2px 3px rgba(45, 105, 187, 0.15));
+    }
+
+    @keyframes drawLine {
+      0% {
+        stroke-dashoffset: 1000;
+      }
+
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes moveLine {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-80px);
+      }
+    }
+
+    /* Data points animation - more visible */
+    .data-point {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--blue-600);
+      opacity: 0;
+      animation: floatDataPoint 14s infinite;
+      box-shadow: 0 0 10px 2px rgba(93, 166, 255, 0.5);
+      z-index: 2;
+    }
+
+    @keyframes floatDataPoint {
+      0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(0.8);
+      }
+
+      10% {
+        opacity: 0.9;
+      }
+
+      90% {
+        opacity: 0.9;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-120px) translateX(50px) scale(1.1);
+      }
+    }
+
+    /* Grid animation - more visible */
+    .grid-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        linear-gradient(to right, rgba(93, 166, 255, 0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(93, 166, 255, 0.2) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 35s linear infinite;
+      opacity: 0.4;
+    }
+
+    @keyframes gridMove {
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 60px 60px;
+      }
+    }
+
+    /* Floating cards animation - more visible */
+    .floating-card {
+      position: absolute;
+      width: 140px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(93, 166, 255, 0.35);
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 6px 16px rgba(23, 70, 161, 0.15);
+      opacity: 0;
+      animation: floatCard 22s infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-800);
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    @keyframes floatCard {
+      0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.95);
+      }
+
+      15% {
+        opacity: 0.85;
+      }
+
+      85% {
+        opacity: 0.85;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) translateX(70px) rotate(5deg) scale(1.05);
+      }
+    }
+
+    /* Particle animation - more visible */
+    .particle {
+      position: absolute;
+      background: rgba(93, 166, 255, 0.5);
+      border-radius: 50%;
+      animation: floatParticle 16s infinite;
+      box-shadow: 0 0 12px 2px rgba(93, 166, 255, 0.4);
+    }
+
+    @keyframes floatParticle {
+      0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(0);
+      }
+
+      20% {
+        opacity: 0.7;
+      }
+
+      80% {
+        opacity: 0.7;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-150px) translateX(100px) scale(1.8);
+      }
+    }
+
+    /* Pulse circles for additional visual interest */
+    .pulse-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(93, 166, 255, 0.15);
+      animation: pulseCircle 8s infinite;
+      z-index: 0;
+    }
+
+    @keyframes pulseCircle {
+      0% {
+        transform: scale(0);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    /* Login form */
+    .login-form {
+      position: relative;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(45, 105, 187, 0.12);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 40px;
+      width: 100%;
+      max-width: 440px;
+      margin: 20px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(93, 166, 255, 0.2);
+      color: var(--ink-700);
+      border: 1px solid rgba(93, 166, 255, 0.3);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(4px);
+      margin-bottom: 20px;
+    }
+
+    .kicker-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue-500);
+      animation: pulse 2.2s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(93, 166, 255, 0.45);
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(93, 166, 255, 0.45);
+      }
+
+      70% {
+        box-shadow: 0 0 0 14px rgba(93, 166, 255, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(93, 166, 255, 0);
+      }
+    }
+
+    .login-header h1 {
+      margin: 10px 0;
+      line-height: 1.05;
+      font-size: 32px;
+      letter-spacing: -0.5px;
+      color: var(--ink-900);
+    }
+
+    .login-header p {
+      color: var(--ink-700);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--ink-800);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(45, 105, 187, 0.2);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink-900);
+      font-size: 16px;
+      transition: border-color var(--speed-fast), box-shadow var(--speed-fast);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--blue-500);
+      box-shadow: 0 0 0 3px rgba(93, 166, 255, 0.2);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .forgot-password {
+      color: var(--blue-600);
+      font-weight: 600;
+      transition: color var(--speed-fast);
+    }
+
+    .forgot-password:hover {
+      color: var(--blue-700);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--blue-500);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--speed-fast), transform var(--speed-fast), box-shadow var(--speed-fast);
+      box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+    }
+
+    .login-btn:hover {
+      background: var(--blue-600);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .signup-section {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(45, 105, 187, 0.1);
+      color: var(--ink-700);
+    }
+
+    .signup-link {
+      color: var(--blue-600);
+      font-weight: 600;
+      transition: color var(--speed-fast);
+    }
+
+    .signup-link:hover {
+      color: var(--blue-700);
+    }
+
+    /* Flash messages styling */
+    .flash {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .flash.success {
+      background: rgba(76, 175, 80, 0.15);
+      color: #2e7d32;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .flash.error {
+      background: rgba(244, 67, 54, 0.15);
+      color: #d32f2f;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .flash.info {
+      background: rgba(33, 150, 243, 0.15);
+      color: #1565c0;
+      border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+
+    @media (max-width: 540px) {
+      .login-form {
+        padding: 30px 24px;
+      }
+
+      .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .forgot-password {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Nav -->
+   <a href="{{url_for('land')}}">
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span>Quorel</span>
+      </div>
+    </div>
+  </nav>
+  </a>
+
+  <!-- Login Container -->
+  <div class="login-container">
+    <!-- Enhanced animated background with more visibility -->
+    <div class="graph-container">
+      <!-- Grid background -->
+      <div class="grid-lines"></div>
+
+      <!-- Pulse circles -->
+      <div class="pulse-circle" style="left: 20%; bottom: 30%; width: 100px; height: 100px; animation-delay: 0s;">
+      </div>
+      <div class="pulse-circle" style="left: 70%; bottom: 40%; width: 150px; height: 150px; animation-delay: 2s;">
+      </div>
+      <div class="pulse-circle" style="left: 40%; bottom: 20%; width: 120px; height: 120px; animation-delay: 4s;">
+      </div>
+
+      <!-- Animated graph lines -->
+      <svg class="graph-line" viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <path d="M0,300 C150,250 300,350 450,280 C600,210 750,320 900,240 C1050,160 1200,260 1200,260" />
+      </svg>
+      <svg class="graph-line" viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <path d="M0,250 C200,200 400,300 600,220 C800,140 1000,240 1200,190" />
+      </svg>
+      <svg class="graph-line" viewBox="0 0 1200 400" preserveAspectRatio="none">
+        <path d="M0,350 C300,280 600,380 900,300 C1200,220 1200,220 1200,220" />
+      </svg>
+
+      <!-- Data points will be added by JavaScript -->
+    </div>
+
+    <div class="login-form">
+      <div class="login-header">
+        <div class="login-kicker">
+          <div class="kicker-dot" aria-hidden="true"></div>
+          <span>Advanced real-time credit-worthiness engine</span>
+        </div>
+        <h1>Welcome to Quorel</h1>
+        <p>Sign in to access your dashboard</p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, msg in messages %}
+      <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <form method="POST">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="Enter your password"
+            required />
+        </div>
+
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" name="remember">
+            <span>Remember me</span>
+          </label>
+          <a class="forgot-password" href="{{ url_for('reset_password') }}">Forgot Password?</a>
+        </div>
+
+        <button class="login-btn" type="submit">Login</button>
+      </form>
+
+      <div class="signup-section">
+        <p>No account? <a class="signup-link" href="{{ url_for('signup') }}">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create animated data points
+    function createDataPoints() {
+      const container = document.querySelector('.graph-container');
+
+      // Create data points
+      for (let i = 0; i < 18; i++) {
+        const point = document.createElement('div');
+        point.className = 'data-point';
+        point.style.left = `${Math.random() * 100}%`;
+        point.style.bottom = `${10 + Math.random() * 20}%`;
+        point.style.animationDelay = `${Math.random() * 15}s`;
+        point.style.width = `${6 + Math.random() * 6}px`;
+        point.style.height = point.style.width;
+
+        // Vary colors for visual interest
+        const colors = [
+          'rgba(93, 166, 255, 0.9)',
+          'rgba(59, 134, 232, 0.9)',
+          'rgba(45, 105, 187, 0.9)'
+        ];
+        point.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        container.appendChild(point);
+      }
+
+      // Create floating cards
+      for (let i = 0; i < 10; i++) {
+        const card = document.createElement('div');
+        card.className = 'floating-card';
+        card.style.left = `${Math.random() * 100}%`;
+        card.style.bottom = `${5 + Math.random() * 15}%`;
+        card.style.animationDelay = `${Math.random() * 20}s`;
+
+        // Add some financial-like content
+        const financialTerms = ['AAA', 'AA+', 'Yield', 'Spread', 'Vol', 'Liquidity', 'Risk', 'ROI', 'Credit', 'Score'];
+        card.textContent = financialTerms[i % financialTerms.length];
+
+        container.appendChild(card);
+      }
+
+      // Create particles
+      for (let i = 0; i < 25; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.bottom = `${5 + Math.random() * 15}%`;
+        particle.style.animationDelay = `${Math.random() * 10}s`;
+        particle.style.width = `${4 + Math.random() * 8}px`;
+        particle.style.height = particle.style.width;
+
+        // Vary colors for visual interest
+        const colors = [
+          'rgba(93, 166, 255, 0.6)',
+          'rgba(59, 134, 232, 0.6)',
+          'rgba(45, 105, 187, 0.6)',
+          'rgba(143, 192, 255, 0.6)'
+        ];
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        container.appendChild(particle);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create animated elements
+      createDataPoints();
+
+      // Auto-hide flash messages after 5 seconds
+      setTimeout(() => {
+        const flashMessages = document.querySelectorAll('.flash');
+        flashMessages.forEach(msg => {
+          msg.style.opacity = '0';
+          msg.style.transition = 'opacity 0.5s ease';
+          setTimeout(() => msg.remove(), 500);
+        });
+      }, 5000);
+    });
+  </script>
+</body>
+
+</html>

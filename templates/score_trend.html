@@ -1,0 +1,468 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="quorel-forecast">
+  <div class="quorel-card">
+    <div class="card-header">
+      <div class="header-icon">📈</div>
+      <h2>Price Trend & News-Aware Forecast</h2>
+      <p>Analyze stock performance with AI-powered predictions</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="forecast-controls">
+      <form id="searchForm" onsubmit="event.preventDefault(); goSearch();" class="ticker-search">
+        <div class="form-group">
+          <input id="tickerInput" type="text" placeholder="Enter ticker (e.g., AAPL)" value="{{ ticker }}"
+            class="form-input">
+          <button type="submit" class="quorel-btn primary">
+            <span>Search</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <div class="horizon-selector">
+        <span>Forecast horizon:</span>
+        <div class="btn-group">
+          <button class="quorel-btn secondary" data-days="5">5d</button>
+          <button class="quorel-btn secondary" data-days="15">15d</button>
+          <button class="quorel-btn secondary" data-days="30">30d</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-container">
+      <canvas id="trendChart"></canvas>
+    </div>
+
+    <div class="forecast-info">
+      <p>
+        This forecast blends recent <b>volatility</b> and <b>news sentiment</b>. Positive headlines can lift the path;
+        negative ones can weigh it down.
+        The shaded band shows the model's confidence range. X-axis uses sequential days (no timestamps).
+      </p>
+    </div>
+
+    <div class="action-links">
+      <a href="{{ url_for('score_page', ticker=ticker) }}" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 12H5M5 12L12 5M5 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Back to Score Page
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  .quorel-forecast {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .quorel-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    margin-bottom: 32px;
+    border: 1px solid rgba(45, 105, 187, 0.12);
+  }
+
+  .card-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .header-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .card-header h2 {
+    color: var(--ink-900);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .card-header p {
+    color: var(--ink-700);
+    font-size: 16px;
+  }
+
+  .forecast-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 30px;
+    justify-content: space-between;
+  }
+
+  .ticker-search {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .ticker-search .form-group {
+    display: flex;
+    gap: 12px;
+  }
+
+  .ticker-search .form-input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1px solid rgba(45, 105, 187, 0.2);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink-900);
+    font-size: 16px;
+    transition: border-color var(--speed-fast), box-shadow var(--speed-fast);
+  }
+
+  .ticker-search .form-input:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(93, 166, 255, 0.2);
+  }
+
+  .horizon-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .horizon-selector span {
+    font-weight: 600;
+    color: var(--ink-800);
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .quorel-btn {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--speed-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .quorel-btn.primary {
+    background: var(--blue-500);
+    color: white;
+    box-shadow: 0 6px 20px rgba(93, 166, 255, 0.35);
+  }
+
+  .quorel-btn.primary:hover {
+    background: var(--blue-600);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(93, 166, 255, 0.45);
+  }
+
+  .quorel-btn.secondary {
+    background: rgba(45, 105, 187, 0.1);
+    color: var(--ink-700);
+    border: 1px solid rgba(45, 105, 187, 0.2);
+  }
+
+  .quorel-btn.secondary:hover,
+  .quorel-btn.secondary.active {
+    background: rgba(45, 105, 187, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .quorel-btn.secondary.active {
+    background: var(--blue-100);
+    color: var(--blue-700);
+    border-color: var(--blue-300);
+  }
+
+  .chart-container {
+    width: 100%;
+    height: 420px;
+    margin-bottom: 24px;
+  }
+
+  .forecast-info {
+    background: var(--blue-25);
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid rgba(45, 105, 187, 0.1);
+    margin-bottom: 24px;
+  }
+
+  .forecast-info p {
+    color: var(--ink-700);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .forecast-info b {
+    color: var(--ink-900);
+  }
+
+  .action-links {
+    text-align: center;
+  }
+
+  .back-link {
+    color: var(--blue-600);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color var(--speed-fast);
+  }
+
+  .back-link:hover {
+    color: var(--blue-700);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .quorel-forecast {
+      padding: 16px;
+    }
+
+    .quorel-card {
+      padding: 24px;
+    }
+
+    .forecast-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .ticker-search {
+      min-width: auto;
+    }
+
+    .ticker-search .form-group {
+      flex-direction: column;
+    }
+
+    .horizon-selector {
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const initTicker = "{{ ticker }}";
+  let selDays = 5;
+  let chart;
+
+  function goSearch() {
+    const t = document.getElementById('tickerInput').value.trim().toUpperCase() || initTicker;
+    window.history.replaceState({}, "", `/score_trend/${t}`);
+    loadData(t, selDays);
+  }
+
+  function setActiveDays(days) {
+    document.querySelectorAll('[data-days]').forEach(b => {
+      b.classList.toggle('active', String(days) === b.getAttribute('data-days'));
+    });
+  }
+
+  async function fetchSeries(ticker, days = 5, window = 30) {
+    const url = `/api/price_forecast?ticker=${encodeURIComponent(ticker)}&days=${days}&window=${window}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Failed to load data');
+    return r.json();
+  }
+
+  function buildChartConfig(labels, actual, futureLabels, forecast, lower, upper, ticker, days) {
+    const allLabels = labels.concat(futureLabels);
+
+    const actualY = allLabels.map((_, i) => (i < labels.length ? actual[i] : null));
+    const forecastY = allLabels.map((_, i) => (i >= labels.length ? (forecast[i - labels.length] ?? null) : null));
+    const lowerY = allLabels.map((_, i) => (i >= labels.length ? (lower[i - labels.length] ?? null) : null));
+    const upperY = allLabels.map((_, i) => (i >= labels.length ? (upper[i - labels.length] ?? null) : null));
+
+    return {
+      type: 'line',
+      data: {
+        labels: allLabels,
+        datasets: [
+          {
+            label: `Actual Close (last ${labels.length}d)`,
+            data: actualY,
+            spanGaps: false,
+            borderWidth: 2,
+            borderColor: 'rgba(45, 105, 187, 1)',
+            backgroundColor: 'rgba(45, 105, 187, 0.1)',
+            pointRadius: 3,
+            pointBackgroundColor: 'rgba(45, 105, 187, 1)',
+            tension: 0.2,
+            fill: false
+          },
+          {
+            label: `Forecast next ${days}d`,
+            data: forecastY,
+            spanGaps: true,
+            borderWidth: 2,
+            borderColor: 'rgba(93, 166, 255, 1)',
+            backgroundColor: 'rgba(93, 166, 255, 0.1)',
+            pointRadius: 3,
+            pointBackgroundColor: 'rgba(93, 166, 255, 1)',
+            borderDash: [6, 6],
+            tension: 0.2,
+            fill: false
+          },
+          // Confidence band lower
+          {
+            label: 'Lower CI',
+            data: lowerY,
+            borderWidth: 0,
+            pointRadius: 0,
+            backgroundColor: 'rgba(93, 166, 255, 0.2)',
+            fill: '+1'
+          },
+          // Confidence band upper (fill between lower & upper)
+          {
+            label: 'Upper CI',
+            data: upperY,
+            borderWidth: 0,
+            pointRadius: 0,
+            backgroundColor: 'rgba(93, 166, 255, 0.2)',
+            fill: false
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'nearest',
+          intersect: false
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: `News-Aware Forecast for ${ticker}`,
+            font: {
+              size: 16,
+              weight: 'bold'
+            },
+            color: 'rgba(11, 26, 51, 1)'
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            titleColor: 'rgba(11, 26, 51, 1)',
+            bodyColor: 'rgba(11, 26, 51, 0.8)',
+            borderColor: 'rgba(45, 105, 187, 0.2)',
+            borderWidth: 1,
+            boxPadding: 10,
+            callbacks: {
+              label: (ctx) => {
+                const dsLabel = ctx.dataset.label || '';
+                const v = ctx.parsed.y;
+                if (v == null) return '';
+                return `${dsLabel}: ${v.toFixed(2)}`;
+              }
+            }
+          },
+          legend: {
+            labels: {
+              filter: (item) => !/CI$/i.test(item.text),
+              font: {
+                size: 12
+              },
+              color: 'rgba(11, 26, 51, 0.8)'
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Days',
+              color: 'rgba(11, 26, 51, 0.8)',
+              font: {
+                weight: 'bold'
+              }
+            },
+            grid: {
+              color: 'rgba(45, 105, 187, 0.1)'
+            },
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 12,
+              color: 'rgba(11, 26, 51, 0.7)'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Close Price',
+              color: 'rgba(11, 26, 51, 0.8)',
+              font: {
+                weight: 'bold'
+              }
+            },
+            grid: {
+              color: 'rgba(45, 105, 187, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(11, 26, 51, 0.7)'
+            },
+            beginAtZero: false
+          }
+        }
+      }
+    };
+  }
+
+  async function loadData(ticker, days) {
+    try {
+      setActiveDays(days);
+      const data = await fetchSeries(ticker, days, 30);
+      const { labels, actual, future_labels, forecast, lower, upper } =
+        { labels: data.labels, actual: data.actual, future_labels: data.future_labels, forecast: data.forecast, lower: data.lower, upper: data.upper };
+
+      const cfg = buildChartConfig(labels, actual, future_labels, forecast, lower, upper, data.ticker, days);
+
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, cfg);
+    } catch (err) {
+      console.error(err);
+      alert('Unable to load chart data for this ticker.');
+    }
+  }
+
+  // Bind horizon buttons
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('tickerInput').value = initTicker;
+    document.querySelectorAll('[data-days]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selDays = parseInt(btn.getAttribute('data-days'), 10);
+        loadData((document.getElementById('tickerInput').value || initTicker).toUpperCase(), selDays);
+      });
+    });
+    loadData(initTicker, selDays);
+  });
+</script>
+{% endblock %}
